@@ -2,6 +2,7 @@
 
 ## Requirements
 
+* Windows
 * Docker
 * GNU Make
 
