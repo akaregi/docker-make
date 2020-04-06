@@ -1,22 +1,31 @@
 NAME=project
 VERSION=latest
 
+TAG=$(NAME):$(VERSION)
+
 .PHONY: build
 build:
-	docker build --tag $(NAME):$(VERSION) .
+	-@make -s stop
+	@echo *** docker build
+	@docker build --tag $(TAG) .
 
 .PHONY: start
 start:
-	docker run --interactive --tty --detach --name $(NAME) $(NAME):$(VERSION) ash
+	@echo *** docker run
+	@docker run --interactive --tty --detach --volume "%CD%":/workspace --name $(NAME) \
+		$(TAG) ash
 
 .PHONY: stop
 stop:
-	docker rm --force $(NAME)
+	@echo *** docker rm
+	docker rm --force --volumes $(NAME)
 
-.PHONY: attach
-attach:
-	docker exec -it $(NAME) /bin/ash
+.PHONY: exec
+exec:
+	@echo *** docker exec
+	@docker exec --interactive --tty $(NAME) /bin/ash
 
 .PHONY: clean
 clean:
-	docker rmi --force $(NAME)
+	@echo *** docker rmi
+	@docker rmi --force $(NAME)
